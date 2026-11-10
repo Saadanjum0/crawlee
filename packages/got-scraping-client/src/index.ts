@@ -48,8 +48,8 @@ export class GotScrapingHttpClient extends BaseHttpClient {
             body: request.body ? Readable.fromWeb(request.body as any) : undefined,
             proxyUrl,
             signal: options?.signal ?? undefined,
-            // The deadline is enforced by `signal`; without this, got-scraping's default 60s request timeout applies on top of it.
-            timeout: { request: undefined },
+            // When a signal carries the deadline, drop got-scraping's default 60s request timeout so it doesn't cut in first.
+            ...(options?.signal ? { timeout: { request: undefined } } : {}),
             followRedirect: redirect === 'follow',
             ...(ignoreTlsErrors ? { https: { rejectUnauthorized: false } } : {}),
         });
