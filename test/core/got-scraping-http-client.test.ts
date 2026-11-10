@@ -31,4 +31,12 @@ describe('GotScrapingHttpClient', () => {
 
         expect(gotScraping).toHaveBeenCalledWith(expect.not.objectContaining({ https: expect.anything() }));
     });
+
+    test('does not apply the got-scraping default request timeout', async () => {
+        const httpClient = new GotScrapingHttpClient();
+
+        await httpClient.sendRequest(new Request('http://example.com'), { timeoutMillis: 120_000 });
+
+        expect(gotScraping).toHaveBeenCalledWith(expect.objectContaining({ timeout: { request: undefined } }));
+    });
 });
